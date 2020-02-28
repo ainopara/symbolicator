@@ -9,7 +9,22 @@
       "request": "launch",
       "name": "Debug",
       "program": "${workspaceFolder}/target/debug/symbolicator",
-      "args": ["run", "-c", "local.yml"],
+      "args": [
+        "run",
+        "-c",
+        "local.yml"
+      ],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "cargo build"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "DebugDefault",
+      "program": "${workspaceFolder}/target/debug/symbolicator",
+      "args": [
+        "run"
+      ],
       "cwd": "${workspaceFolder}",
       "preLaunchTask": "cargo build"
     }

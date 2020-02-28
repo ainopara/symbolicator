@@ -16,3 +16,6 @@ __pycache__
 
 # mkdocs
 site
+
+.idea
+/symsorter/output
