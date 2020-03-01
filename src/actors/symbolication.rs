@@ -14,7 +14,7 @@ use futures01::sync::oneshot;
 use parking_lot::RwLock;
 use regex::Regex;
 use sentry::integrations::failure::capture_fail;
-use symbolic::common::{Arch, ByteView, CodeId, DebugId, InstructionInfo, Language, SelfCell};
+use symbolic::common::{Arch, ByteView, CodeId, DebugId, InstructionInfo, Language, SelfCell, Name};
 use symbolic::debuginfo::{Object, ObjectDebugSession};
 use symbolic::demangle::{Demangle, DemangleFormat, DemangleOptions};
 use symbolic::minidump::processor::{
@@ -744,10 +744,21 @@ fn symbolicate_stacktrace(
                     continue;
                 }
 
+                let mut demangled_frame = frame.clone();
+                if let Some(symbol_string) = frame.function {
+                    if symbol_string.starts_with("$s") {
+                        let name = Name::with_language(symbol_string.as_str(), Language::Swift);
+                        let demanged_name = name.demangle(DEMANGLE_OPTIONS);
+                        if let Some(demangled_name) = demanged_name {
+                            demangled_frame.function = Some(demangled_name);
+                        }
+                    }
+                }
+
                 stacktrace.frames.push(SymbolicatedFrame {
                     status,
                     original_index: Some(index),
-                    raw: frame,
+                    raw: demangled_frame,
                 });
             }
         }
